@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import jakarta.inject.Inject;
-import jakarta.inject.Named;
+import org.springframework.stereotype.Component;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -45,7 +45,7 @@ import testIT.jira.tms.TmsUrlHelper;
 import testIT.jira.tms.TmsWorkItemUnlinkService;
 
 @Path(value="/tms")
-@Named
+@Component
 public class TmsResource {
     private static final Logger log = LoggerFactory.getLogger(TmsResource.class);
     private static final Gson GSON = new Gson();

@@ -5,14 +5,14 @@ import com.atlassian.jira.project.Project;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import jakarta.inject.Inject;
-import jakarta.inject.Named;
+import org.springframework.stereotype.Component;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import testIT.jira.ConfigResource;
 import testIT.jira.testcase.TestCaseIssueType;
 
-@Named("hiddenSteps")
+@Component("hiddenSteps")
 public class HiddenStepsCustomField {
     private static final Logger log = LoggerFactory.getLogger(HiddenStepsCustomField.class);
     private static final String FIELD_NAME = "hiddenSteps";

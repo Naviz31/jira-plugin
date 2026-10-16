@@ -49,7 +49,33 @@ public class TmsAdaptersClient {
         return page(items, response, skip, take);
     }
 
+    public static final String[] WORK_ITEM_TYPES_TEST_CASES = {"TestCases"};
+    public static final String[] WORK_ITEM_TYPES_ALL = {"TestCases", "SharedSteps", "CheckLists"};
+
     public TmsPage<JsonObject> searchWorkItems(String baseUrl, String token, int skip, int take, String issueKey)
+            throws TmsClientException, IOException, URISyntaxException {
+        return searchWorkItems(baseUrl, token, skip, take, issueKey, null, WORK_ITEM_TYPES_TEST_CASES);
+    }
+
+    public TmsPage<JsonObject> searchWorkItems(
+            String baseUrl,
+            String token,
+            int skip,
+            int take,
+            String issueKey,
+            String projectId)
+            throws TmsClientException, IOException, URISyntaxException {
+        return searchWorkItems(baseUrl, token, skip, take, issueKey, projectId, WORK_ITEM_TYPES_TEST_CASES);
+    }
+
+    public TmsPage<JsonObject> searchWorkItems(
+            String baseUrl,
+            String token,
+            int skip,
+            int take,
+            String issueKey,
+            String projectId,
+            String... entityTypes)
             throws TmsClientException, IOException, URISyntaxException {
         URIBuilder uriBuilder = new URIBuilder(TmsHttpClient.normalizeBaseUrl(baseUrl) + WORKITEMS_SEARCH_PATH)
                 .setParameter("Skip", String.valueOf(Math.max(0, skip)))
@@ -62,8 +88,23 @@ public class TmsAdaptersClient {
         JsonObject filter = new JsonObject();
         filter.addProperty("isDeleted", false);
         JsonArray types = new JsonArray();
-        types.add("TestCases");
+        String[] resolvedTypes = (entityTypes != null && entityTypes.length > 0)
+                ? entityTypes
+                : WORK_ITEM_TYPES_TEST_CASES;
+        for (String type : resolvedTypes) {
+            if (type != null && !type.trim().isEmpty()) {
+                types.add(type.trim());
+            }
+        }
+        if (types.size() == 0) {
+            types.add("TestCases");
+        }
         filter.add("types", types);
+        if (projectId != null && !projectId.trim().isEmpty()) {
+            JsonArray projectIds = new JsonArray();
+            projectIds.add(projectId.trim());
+            filter.add("projectIds", projectIds);
+        }
         body.add("filter", filter);
         TmsHttpClient.HttpResponseData response = TmsHttpClient.executePost(
                 uriBuilder.build(), token, GSON.toJson(body), "TMS work items search failed");

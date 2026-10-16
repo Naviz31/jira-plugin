@@ -17,7 +17,7 @@ import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import jakarta.inject.Inject;
-import jakarta.inject.Named;
+import org.springframework.stereotype.Component;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashSet;
@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import testIT.jira.ConfigResource;
 
-@Named("testitTestCaseIssueType")
+@Component("testitTestCaseIssueType")
 public class TestCaseIssueType {
     private static final Logger log = LoggerFactory.getLogger(TestCaseIssueType.class);
 

@@ -1,5 +1,8 @@
 package testIT.jira.tms;
 
+import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.sal.api.pluginsettings.PluginSettings;
+import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -15,8 +18,13 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import testIT.jira.ConfigResource;
 
 final class TmsHttpClient {
+    private static final Logger log = LoggerFactory.getLogger(TmsHttpClient.class);
+
     static final int CONNECT_TIMEOUT_MS = 10_000;
     static final int SOCKET_TIMEOUT_MS = 30_000;
 
@@ -25,30 +33,38 @@ final class TmsHttpClient {
 
     static HttpResponseData executeGet(URI uri, String token, String errorPrefix)
             throws TmsClientException, IOException {
-        HttpGet request = new HttpGet(uri);
-        request.setHeader("Authorization", authorizationHeader(token));
-        request.setHeader("Accept", "application/json");
-        return executeRequest(request, errorPrefix);
+        return executeWithRetry(errorPrefix, () -> {
+            HttpGet request = new HttpGet(uri);
+            request.setHeader("Authorization", authorizationHeader(token));
+            request.setHeader("Accept", "application/json");
+            return executeOnce(request, errorPrefix);
+        });
     }
 
     static HttpResponseData executePost(URI uri, String token, String jsonBody, String errorPrefix)
             throws TmsClientException, IOException {
-        HttpPost request = new HttpPost(uri);
-        request.setHeader("Authorization", authorizationHeader(token));
-        request.setHeader("Accept", "application/json");
-        request.setHeader("Content-Type", "application/json");
-        request.setEntity(new StringEntity(jsonBody != null ? jsonBody : "{}", ContentType.APPLICATION_JSON));
-        return executeRequest(request, errorPrefix);
+        String body = jsonBody != null ? jsonBody : "{}";
+        return executeWithRetry(errorPrefix, () -> {
+            HttpPost request = new HttpPost(uri);
+            request.setHeader("Authorization", authorizationHeader(token));
+            request.setHeader("Accept", "application/json");
+            request.setHeader("Content-Type", "application/json");
+            request.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
+            return executeOnce(request, errorPrefix);
+        });
     }
 
     static HttpResponseData executePut(URI uri, String token, String jsonBody, String errorPrefix)
             throws TmsClientException, IOException {
-        HttpPut request = new HttpPut(uri);
-        request.setHeader("Authorization", authorizationHeader(token));
-        request.setHeader("Accept", "application/json");
-        request.setHeader("Content-Type", "application/json");
-        request.setEntity(new StringEntity(jsonBody != null ? jsonBody : "{}", ContentType.APPLICATION_JSON));
-        return executeRequest(request, errorPrefix);
+        String body = jsonBody != null ? jsonBody : "{}";
+        return executeWithRetry(errorPrefix, () -> {
+            HttpPut request = new HttpPut(uri);
+            request.setHeader("Authorization", authorizationHeader(token));
+            request.setHeader("Accept", "application/json");
+            request.setHeader("Content-Type", "application/json");
+            request.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
+            return executeOnce(request, errorPrefix);
+        });
     }
 
     static HttpResponseData executeGetWithoutError(URI uri, String token) throws IOException {
@@ -67,7 +83,55 @@ final class TmsHttpClient {
         }
     }
 
-    private static HttpResponseData executeRequest(HttpRequestBase request, String errorPrefix)
+    private interface Attempt {
+        HttpResponseData run() throws TmsClientException, IOException;
+    }
+
+    private static HttpResponseData executeWithRetry(String errorPrefix, Attempt attempt)
+            throws TmsClientException, IOException {
+        boolean retryEnabled = readRetryEnabled();
+        int maxAttempts = retryEnabled
+                ? TmsRetrySettings.clampAttempts(readRetryAttempts())
+                : 1;
+        int intervalMs = retryEnabled
+                ? TmsRetrySettings.clampIntervalMs(readRetryIntervalMs())
+                : 0;
+        TmsClientException lastClientError = null;
+        IOException lastIoError = null;
+        for (int attemptIndex = 1; attemptIndex <= maxAttempts; attemptIndex++) {
+            try {
+                return attempt.run();
+            } catch (TmsClientException e) {
+                lastClientError = e;
+                lastIoError = null;
+                if (!isRetryableStatus(e.getStatusCode()) || attemptIndex >= maxAttempts) {
+                    throw e;
+                }
+                log.warn("TMS request failed (attempt {}/{}): {}; retrying in {} ms",
+                        attemptIndex, maxAttempts, e.getMessage(), intervalMs);
+            } catch (IOException e) {
+                lastIoError = e;
+                lastClientError = null;
+                if (attemptIndex >= maxAttempts) {
+                    throw e;
+                }
+                log.warn("TMS request I/O failed (attempt {}/{}): {}; retrying in {} ms",
+                        attemptIndex, maxAttempts,
+                        e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName(),
+                        intervalMs);
+            }
+            sleepQuietly(intervalMs);
+        }
+        if (lastClientError != null) {
+            throw lastClientError;
+        }
+        if (lastIoError != null) {
+            throw lastIoError;
+        }
+        throw new TmsClientException(0, truncate(errorPrefix + ": retry exhausted"));
+    }
+
+    private static HttpResponseData executeOnce(HttpRequestBase request, String errorPrefix)
             throws TmsClientException, IOException {
         RequestConfig requestConfig = requestConfig();
         request.setConfig(requestConfig);
@@ -85,6 +149,65 @@ final class TmsHttpClient {
                     parseIntHeader(response, "Pagination-Take", 0),
                     parseIntHeader(response, "Pagination-Total-Items", 0),
                     null);
+        }
+    }
+
+    static boolean isRetryableStatus(int statusCode) {
+        return statusCode == 429 || statusCode >= 500;
+    }
+
+    private static boolean readRetryEnabled() {
+        String raw = readSetting(".tmsRetryEnabled");
+        return raw != null && "true".equalsIgnoreCase(raw.trim());
+    }
+
+    private static int readRetryAttempts() {
+        String raw = readSetting(".tmsRetryAttempts");
+        if (raw == null || raw.isEmpty()) {
+            return TmsRetrySettings.DEFAULT_RETRY_ATTEMPTS;
+        }
+        try {
+            return Integer.parseInt(raw.trim());
+        } catch (NumberFormatException e) {
+            return TmsRetrySettings.DEFAULT_RETRY_ATTEMPTS;
+        }
+    }
+
+    private static int readRetryIntervalMs() {
+        String raw = readSetting(".tmsRetryIntervalMs");
+        if (raw == null || raw.isEmpty()) {
+            return TmsRetrySettings.DEFAULT_RETRY_INTERVAL_MS;
+        }
+        try {
+            return Integer.parseInt(raw.trim());
+        } catch (NumberFormatException e) {
+            return TmsRetrySettings.DEFAULT_RETRY_INTERVAL_MS;
+        }
+    }
+
+    private static String readSetting(String suffix) {
+        try {
+            PluginSettingsFactory factory = ComponentAccessor.getOSGiComponentInstanceOfType(PluginSettingsFactory.class);
+            if (factory == null) {
+                return null;
+            }
+            PluginSettings settings = factory.createGlobalSettings();
+            Object value = settings.get(ConfigResource.Config.class.getName() + suffix);
+            return value != null ? String.valueOf(value) : null;
+        } catch (RuntimeException e) {
+            log.debug("Cannot read TMS retry setting {}: {}", suffix, e.getMessage());
+            return null;
+        }
+    }
+
+    private static void sleepQuietly(int intervalMs) {
+        if (intervalMs <= 0) {
+            return;
+        }
+        try {
+            Thread.sleep(intervalMs);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 

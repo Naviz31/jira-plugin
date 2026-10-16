@@ -4,6 +4,7 @@
     <resource name="testcase.png" type="download" location="images/testcase.png"/>
 
     <web-resource key="testit-resources" name="Plugin Resources">
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
         <resource name="testit-plugin-conf-ui.js" type="download" location="/js/testit-plugin-conf-ui.js"/>
     </web-resource>
 

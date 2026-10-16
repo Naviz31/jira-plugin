@@ -101,7 +101,7 @@ public class TmsWorkItemUnlinkService {
     /**
      * Maps GET work item JSON to UpdateWorkItemApiModel-shaped payload.
      */
-    static JsonObject buildUpdatePayload(JsonObject workItem) {
+    public static JsonObject buildUpdatePayload(JsonObject workItem) {
         JsonObject payload = new JsonObject();
         copyRequired(payload, workItem, "id");
         copyIfPresent(payload, workItem, "sectionId");

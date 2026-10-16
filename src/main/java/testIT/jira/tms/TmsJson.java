@@ -7,14 +7,14 @@ import com.google.gson.JsonParser;
 import java.util.ArrayList;
 import java.util.List;
 
-final class TmsJson {
+public final class TmsJson {
     private static final String[] HISTORY_ARRAY_KEYS = {"items", "data", "results", "value"};
     private static final String[] RESULT_DATE_KEYS = {"completedOn", "date", "createdDate", "modifiedDate", "startedOn"};
 
     private TmsJson() {
     }
 
-    static String getString(JsonObject object, String key) {
+    public static String getString(JsonObject object, String key) {
         if (object == null || !object.has(key) || object.get(key).isJsonNull()) {
             return null;
         }
