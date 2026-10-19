@@ -6,19 +6,20 @@ The Test IT plugin integrates the server (Data Center) edition of Jira with Test
 - Link a Jira issue to:
   - Test cases and test results
   - Test plans
+- Optionally **duplicate** Test IT work items into Jira **TestCase** issues in the background (per project mapping and schedule).
 
 **Compatibility**
 
 | Jira                    | Plugin artifact           |
 |-------------------------|---------------------------|
-| Data Center **8.x–9.x** | `testit-1.1.0.jar`        |
-| Data Center **11.x**    | `testit-1.1.0-jira11.jar` |
+| Data Center **8.x–9.x** | `testit-1.2.0.jar`        |
+| Data Center **11.x**    | `testit-1.2.0-jira11.jar` |
 
 Use the JAR that matches your Jira major line. One file does **not** cover both 8–9 and 11. Jira Cloud is not supported.
 
 ## Install the Test IT plugin
 
-1. Download the installable `.jar` for your Jira version from the **Github releases**.  
+1. Download the installable `.jar` for your Jira version from the **Github releases**.
 2. Sign in to Jira as an administrator and open **Applications**.
 3. Open app management and upload the `.jar`: **Manage apps** → **Upload app**.
 4. Select the file and click **Upload**. The plugin is installed into Jira.
@@ -33,7 +34,8 @@ Use the JAR that matches your Jira major line. One file does **not** cover both 
    - **Test IT URL** — base URL of your Test IT instance
    - **Private Token** — Test IT private API token
    - **Projects** — Jira project keys to integrate with Test IT (comma-separated, for example `PLUG,DOUB`)
-3. Click **Save**.
+3. Optional: configure **Work item duplication** (see below) and **TMS HTTP retries** (off by default).
+4. Click **Save**.
 
 The plugin is installed and configured.
 
@@ -95,3 +97,33 @@ You can link a test plan to a Jira issue. The plan and summary information, incl
 - Lists test plans linked by URL on this issue.
 - Typical columns: ID, name (link), version, product, start, end, status, and **Tests** (total and per-status counts from the project workflow, including custom statuses).
 - Add, refresh, and unlink as described above.
+
+## Work item duplication
+
+Duplication creates and keeps Jira **TestCase** issues in sync with work items from a chosen Test IT project. It runs in the background on a schedule you define per mapping.
+
+### Purpose
+
+- If a work item in TMS has **no** Issue link to Jira, the plugin creates a TestCase in the mapped Jira project, writes a **Description**, adds an Issue link in TMS, and prefixes the work item name with `{ISSUE-KEY}:`.
+- If a work item **already** has an Issue link, the plugin does not create another issue. It may add the missing name prefix and update the Jira Description when the work item content changes.
+
+Work item types included in the duplication: **TestCases**, **SharedSteps**, and **CheckLists**.
+
+### Set up a mapping
+
+1. Open the plugin configuration page.
+2. Under **Work item duplication**, click **Add mapping**.
+3. Select:
+   - **Jira project** — where TestCase issues will be created
+   - **Test IT project** — source of work items (list loads from Test IT using your URL and token)
+4. Choose a schedule:
+   - **Every N minutes** — interval sync
+   - **Daily at time** — once per day at the given time (server JVM timezone)
+5. Turn on **Enable** for this mapping.
+6. Click **Save**. Enabled mappings start syncing in the background shortly after save.
+
+Each Jira project ↔ Test IT project pair must be unique. You can add several mappings for different pairs.
+
+### What you see after Save
+
+Each mapping shows status counters such as **created**, **updated**, **already linked**, and **errors** (refreshed on the configuration page).
