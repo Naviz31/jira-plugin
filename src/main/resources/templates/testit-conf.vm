@@ -3,6 +3,24 @@
     <title>Test IT Plugin Configuration</title>
     <meta name="decorator" content="atl.admin">
     $webResourceManager.requireResource("testit.testit:testit-resources")
+    <style type="text/css">
+      #duplication-mappings .dup-row {
+        border: 1px solid #ccc;
+        padding: 12px;
+        margin: 0 0 12px 0;
+        background: #fafafa;
+      }
+      #duplication-mappings .dup-row .field-group { margin-bottom: 8px; }
+      #duplication-mappings .dup-stats {
+        font-size: 12px;
+        color: #505050;
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px dashed #ccc;
+      }
+      #duplication-mappings .dup-stats strong { color: #333; }
+      #tms-project-loading { display: none; margin-left: 8px; color: #707070; }
+    </style>
   </head>
   <body>
     <div class="aui-page-header-inner">
@@ -22,6 +40,45 @@
         <div id="projects">
         </div>
       </div>
+
+      <hr/>
+      <h2>Work item duplication</h2>
+      <p class="description">
+        Create Jira TestCase issues for Test IT work items that do not yet have an Issue link.
+        Enable each mapping individually. Schedules run in the background after Save.
+      </p>
+      <div id="duplication-section">
+        <div id="duplication-mappings"></div>
+        <div class="field-group">
+          <button type="button" id="duplication-add" class="aui-button">Add mapping</button>
+          <span id="tms-project-loading">Loading Test IT projects…</span>
+        </div>
+      </div>
+
+      <hr/>
+      <h2>TMS HTTP retries</h2>
+      <p class="description">
+        Optional retries for Test IT HTTP calls on network errors, HTTP 429 and 5xx.
+        Disabled by default (single attempt).
+      </p>
+      <div class="field-group">
+        <label for="tmsRetryEnabled">Enable retries</label>
+        <div class="checkbox">
+          <input type="checkbox" id="tmsRetryEnabled" name="tmsRetryEnabled" class="checkbox">
+          <label for="tmsRetryEnabled">Retry failed Test IT requests</label>
+        </div>
+      </div>
+      <div class="field-group">
+        <label for="tmsRetryAttempts">TMS retry attempts</label>
+        <input type="number" id="tmsRetryAttempts" name="tmsRetryAttempts" class="text short-field" min="1" max="10" value="3" disabled>
+        <div class="description">Max HTTP attempts per Test IT request (1–10), including the first try.</div>
+      </div>
+      <div class="field-group">
+        <label for="tmsRetryIntervalMs">Retry interval (ms)</label>
+        <input type="number" id="tmsRetryIntervalMs" name="tmsRetryIntervalMs" class="text short-field" min="0" max="60000" value="2000" disabled>
+        <div class="description">Pause between retry attempts (0–60000 ms).</div>
+      </div>
+
       <div class="field-group">
         <input type="submit" value="Save" class="button">
       </div>

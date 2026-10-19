@@ -5,14 +5,14 @@ import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import jakarta.inject.Inject;
-import jakarta.inject.Named;
+import org.springframework.stereotype.Component;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
 
-@Named
+@Component
 public class PluginManager extends HttpServlet {
     @ComponentImport
     private final UserManager userManager;
