@@ -27,18 +27,59 @@
         return TestITCommon.resolveIssueKey({ mode: "panel", explicitKey: explicitKey, $element: $panel });
     }
 
+    // Maps a result status label (English or Russian) to a colour key.
+    function statusKey(statusLabel) {
+        var upper = String(statusLabel || "").toUpperCase();
+        if (/^(PASSED|SUCCEEDED|УСПЕШЕН|УСПЕШНО|ПРОЙДЕН)/.test(upper)) {
+            return "pass";
+        }
+        if (/^(FAILED|ПРОВАЛЕН|ПРОВАЛ)/.test(upper)) {
+            return "fail";
+        }
+        if (/^(SKIPPED|ПРОПУЩЕН)/.test(upper)) {
+            return "skip";
+        }
+        if (/^(BLOCKED|ЗАБЛОКИРОВАН)/.test(upper)) {
+            return "blocked";
+        }
+        if (/^(IN ?PROGRESS|В ПРОЦЕССЕ)/.test(upper)) {
+            return "progress";
+        }
+        return "";
+    }
+
     function statusLozengeClass(statusLabel) {
-        if (!statusLabel) {
-            return "aui-lozenge";
+        var key = statusKey(statusLabel);
+        return key ? "aui-lozenge testit-st testit-st-" + key : "aui-lozenge";
+    }
+
+    // Order-independent summary of a work item's results: one coloured badge per status.
+    function renderResultsSummary(results) {
+        var $summary = $("<span>").addClass("testit-results-summary");
+        if (!results || !results.length) {
+            return $summary;
         }
-        var upper = String(statusLabel).toUpperCase();
-        if (upper === "PASSED" || upper === "SUCCEEDED") {
-            return "aui-lozenge aui-lozenge-success";
-        }
-        if (upper === "FAILED") {
-            return "aui-lozenge aui-lozenge-error";
-        }
-        return "aui-lozenge";
+        var counts = {};
+        var order = [];
+        $.each(results, function (_, result) {
+            var key = statusKey(result.statusLabel) || "other";
+            if (!counts[key]) {
+                counts[key] = { n: 0, label: result.statusLabel || "—" };
+                order.push(key);
+            }
+            counts[key].n++;
+        });
+        $.each(["pass", "fail", "skip", "blocked", "progress", "other"], function (_, key) {
+            if (!counts[key]) {
+                return;
+            }
+            $summary.append(
+                $("<span>").addClass("testit-results-badge testit-st-" + key)
+                    .attr("title", counts[key].label + ": " + counts[key].n)
+                    .text(counts[key].n)
+            );
+        });
+        return $summary.attr("title", "Результатов: " + results.length);
     }
 
     function formatTestCaseLabel(testCase) {
@@ -138,6 +179,7 @@
         
         // И в конце заголовок
         $header.append(renderTestCaseTitle(testCase));
+        $header.append(renderResultsSummary(testCase.results));
         
         var $body = $("<div>").addClass("testit-testcase-body").append(renderResults(testCase.results));
         return $("<div>").addClass("testit-testcase-wrap testit-testcase-collapsed")

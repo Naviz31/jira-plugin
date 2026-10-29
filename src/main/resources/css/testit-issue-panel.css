@@ -89,3 +89,67 @@
 .testit-issue-panel table.testit-results-table .testit-col-status-cell {
     width: 28%;
 }
+
+/* ---- status colours and result badges ---- */
+.testit-issue-panel .testit-st-pass {
+    background: #e3fcef;
+    color: #006644;
+}
+
+.testit-issue-panel .testit-st-fail {
+    background: #ffebe6;
+    color: #bf2600;
+}
+
+.testit-issue-panel .testit-st-skip {
+    background: #fff4e5;
+    color: #b65c02;
+}
+
+.testit-issue-panel .testit-st-blocked {
+    background: #ebecf0;
+    color: #42526e;
+}
+
+.testit-issue-panel .testit-st-progress {
+    background: #eae6ff;
+    color: #403294;
+}
+
+.testit-issue-panel .testit-st-other {
+    background: #deebff;
+    color: #0747a6;
+}
+
+.testit-issue-panel .testit-testcase-wrap {
+    padding: 8px 12px;
+    border: 1px solid #dfe1e6;
+    border-radius: 6px;
+    background: #fff;
+}
+
+.testit-issue-panel .testit-testcase-title {
+    font-weight: 600;
+}
+
+.testit-issue-panel .testit-results-summary {
+    display: inline-flex;
+    flex: 0 0 auto;
+    gap: 4px;
+    margin-left: 8px;
+}
+
+.testit-issue-panel .testit-results-badge {
+    min-width: 20px;
+    padding: 0 6px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 20px;
+    text-align: center;
+}
+
+.testit-issue-panel table.testit-results-table td,
+.testit-issue-panel table.testit-results-table th {
+    font-variant-numeric: tabular-nums;
+}

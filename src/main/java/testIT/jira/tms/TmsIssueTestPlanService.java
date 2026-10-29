@@ -116,7 +116,13 @@ public class TmsIssueTestPlanService {
         String planProjectId = TmsJson.getString(plan, "projectId");
         List<TmsTestStatusDto> statusCatalog = resolveWorkflowStatuses(
                 tmsBaseUrl, token, planProjectId, parsed.projectGlobalId, workflowStatusCache);
-        return mapTestPlanRow(plan, parsed, analytics, statusCatalog);
+        TmsTestPlanRowDto row = mapTestPlanRow(plan, parsed, analytics, statusCatalog);
+        row.attributes = TmsPlanAttributes.load(tmsClient, tmsBaseUrl, token, planProjectId, plan);
+        TmsPlanTests.Result planTests = TmsPlanTests.load(tmsClient, tmsBaseUrl, token, row.id, parsed.projectGlobalId);
+        row.bugs = planTests.bugs;
+        row.points = planTests.points;
+        row.pointsTruncated = planTests.truncated;
+        return row;
     }
 
     private List<TmsTestStatusDto> resolveWorkflowStatuses(

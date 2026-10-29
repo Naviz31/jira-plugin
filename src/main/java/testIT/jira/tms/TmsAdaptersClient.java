@@ -211,6 +211,74 @@ public class TmsAdaptersClient {
     /**
      * Statuses from the project's workflow. Fail-soft: empty list on error.
      */
+    public List<JsonObject> getTestPlanAttributeDefinitions(String baseUrl, String token, String projectId)
+            throws TmsClientException, IOException {
+        if (projectId == null || projectId.trim().isEmpty()) {
+            return new ArrayList<>();
+        }
+        URI uri = URI.create(TmsHttpClient.normalizeBaseUrl(baseUrl)
+                + "/api/v2/projects/" + projectId.trim() + "/testPlans/attributes");
+        TmsHttpClient.HttpResponseData response =
+                TmsHttpClient.executeGet(uri, token, "TMS get test plan attributes failed");
+        return TmsJson.parseObjectArray(response.body);
+    }
+
+    private static final int TEST_POINTS_PAGE_SIZE = 1000;
+    private static final int TEST_POINTS_MAX_PAGES = 5;
+    /** The most test points of one plan that are ever read. */
+    static final int TEST_POINTS_LIMIT = TEST_POINTS_PAGE_SIZE * TEST_POINTS_MAX_PAGES;
+
+    /** Test points of a plan (by plan UUID), at most {@code PAGE_SIZE * MAX_PAGES} of them. */
+    public List<JsonObject> getTestPlanPoints(String baseUrl, String token, String testPlanId)
+            throws TmsClientException, IOException {
+        List<JsonObject> points = new ArrayList<>();
+        if (testPlanId == null || testPlanId.trim().isEmpty()) {
+            return points;
+        }
+        JsonObject body = new JsonObject();
+        JsonArray planIds = new JsonArray();
+        planIds.add(testPlanId.trim());
+        body.add("testPlanIds", planIds);
+        for (int page = 0; page < TEST_POINTS_MAX_PAGES; page++) {
+            int skip = page * TEST_POINTS_PAGE_SIZE;
+            URI uri = URI.create(TmsHttpClient.normalizeBaseUrl(baseUrl)
+                    + "/api/v2/testPoints/search?skip=" + skip + "&take=" + TEST_POINTS_PAGE_SIZE);
+            TmsHttpClient.HttpResponseData response = TmsHttpClient.executePost(
+                    uri, token, GSON.toJson(body), "TMS get test plan points failed");
+            List<JsonObject> items = TmsJson.parseObjectArray(response.body);
+            points.addAll(items);
+            // totalItems is 0 when the server sends no pagination header: then only a short page ends the loop.
+            boolean lastPage = items.size() < TEST_POINTS_PAGE_SIZE
+                    || (response.totalItems > 0 && points.size() >= response.totalItems);
+            if (lastPage) {
+                break;
+            }
+        }
+        return points;
+    }
+
+    public JsonObject getConfiguration(String baseUrl, String token, String configurationId)
+            throws TmsClientException, IOException {
+        if (configurationId == null || configurationId.trim().isEmpty()) {
+            return new JsonObject();
+        }
+        URI uri = URI.create(TmsHttpClient.normalizeBaseUrl(baseUrl)
+                + "/api/v2/configurations/" + configurationId.trim());
+        TmsHttpClient.HttpResponseData response =
+                TmsHttpClient.executeGet(uri, token, "TMS get configuration failed");
+        return TmsJson.parseObject(response.body);
+    }
+
+    public JsonObject getUser(String baseUrl, String token, String userId)
+            throws TmsClientException, IOException {
+        if (userId == null || userId.trim().isEmpty()) {
+            return new JsonObject();
+        }
+        URI uri = URI.create(TmsHttpClient.normalizeBaseUrl(baseUrl) + "/api/v2/users/" + userId.trim());
+        TmsHttpClient.HttpResponseData response = TmsHttpClient.executeGet(uri, token, "TMS get user failed");
+        return TmsJson.parseObject(response.body);
+    }
+
     public List<TmsTestStatusDto> getWorkflowStatusesForProject(String baseUrl, String token, String projectId) {
         if (projectId == null || projectId.trim().isEmpty()) {
             return new ArrayList<>();

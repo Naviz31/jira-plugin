@@ -151,3 +151,1101 @@
     color: #0052cc;
     border-color: transparent;
 }
+
+/* ---- plan cards with charts ---- */
+.testit-testplans-panel .testit-tp-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.testit-testplans-panel .testit-tp-card {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+    padding: 16px 20px;
+    border: 1px solid #dfe1e6;
+    border-radius: 6px;
+    background: #fff;
+    box-shadow: 0 1px 1px rgba(9, 30, 66, 0.08);
+}
+
+.testit-testplans-panel .testit-tp-card:hover {
+    box-shadow: 0 2px 6px rgba(9, 30, 66, 0.15);
+}
+
+.testit-testplans-panel .testit-tp-card .testit-testplan-unlink-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
+.testit-testplans-panel .testit-tp-card:hover .testit-testplan-unlink-btn {
+    opacity: 1;
+    visibility: visible;
+}
+
+.testit-testplans-panel .testit-tp-donut {
+    position: relative;
+    flex: 0 0 128px;
+    width: 128px;
+    height: 128px;
+}
+
+.testit-testplans-panel .testit-tp-donut svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.testit-testplans-panel .testit-tp-donut-center {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.testit-testplans-panel .testit-tp-donut-value {
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.1;
+    color: #172b4d;
+}
+
+.testit-testplans-panel .testit-tp-donut-caption {
+    margin-top: 2px;
+    font-size: 11px;
+    color: #6b778c;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.testit-testplans-panel .testit-tp-info {
+    flex: 1 1 320px;
+    min-width: 0;
+}
+
+.testit-testplans-panel .testit-tp-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding-right: 24px;
+}
+
+.testit-testplans-panel .testit-tp-name {
+    font-size: 16px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.testit-testplans-panel .testit-tp-id {
+    color: #6b778c;
+    font-variant-numeric: tabular-nums;
+}
+
+.testit-testplans-panel .testit-tp-status {
+    margin: 0;
+}
+
+.testit-testplans-panel .testit-tp-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 8px;
+    margin: 8px 0 12px;
+}
+
+.testit-testplans-panel .testit-tp-chip {
+    display: inline-flex;
+    gap: 5px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: #f4f5f7;
+    font-size: 12px;
+    line-height: 18px;
+}
+
+.testit-testplans-panel .testit-tp-chip-label {
+    color: #6b778c;
+}
+
+.testit-testplans-panel .testit-tp-chip-value {
+    color: #172b4d;
+    font-variant-numeric: tabular-nums;
+}
+
+.testit-testplans-panel .testit-tp-summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+    margin-bottom: 6px;
+}
+
+.testit-testplans-panel .testit-tp-summary-main {
+    font-weight: 600;
+    color: #172b4d;
+}
+
+.testit-testplans-panel .testit-tp-summary-sub {
+    font-size: 12px;
+    color: #6b778c;
+}
+
+.testit-testplans-panel .testit-tp-bar {
+    display: flex;
+    height: 8px;
+    overflow: hidden;
+    border-radius: 4px;
+    background: #ebecf0;
+}
+
+.testit-testplans-panel .testit-tp-bar-seg {
+    display: block;
+    height: 100%;
+}
+
+.testit-testplans-panel .testit-tp-bar-seg + .testit-tp-bar-seg {
+    box-shadow: -1px 0 0 #fff;
+}
+
+.testit-testplans-panel .testit-tp-legend {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 4px 20px;
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.testit-testplans-panel .testit-tp-legend li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 13px;
+    line-height: 20px;
+}
+
+.testit-testplans-panel .testit-tp-legend-zero {
+    opacity: 0.55;
+}
+
+.testit-testplans-panel .testit-tp-dot {
+    flex: 0 0 10px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.testit-testplans-panel .testit-tp-legend-label {
+    flex: 1 1 auto;
+    min-width: 0;
+    color: #42526e;
+}
+
+.testit-testplans-panel .testit-tp-legend-count {
+    font-weight: 600;
+    color: #172b4d;
+    font-variant-numeric: tabular-nums;
+}
+
+.testit-testplans-panel .testit-tp-legend-pct {
+    flex: 0 0 46px;
+    text-align: right;
+    font-size: 12px;
+    color: #6b778c;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ---- plan custom attributes ---- */
+.testit-testplans-panel .testit-attr-section {
+    flex: 1 1 100%;
+    margin-top: 4px;
+    padding-top: 12px;
+    border-top: 1px solid #ebecf0;
+}
+
+.testit-testplans-panel .testit-attr-heading {
+    margin-bottom: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #6b778c;
+}
+
+.testit-testplans-panel .testit-attr-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px 20px;
+}
+
+.testit-testplans-panel .testit-attr-tile {
+    min-width: 0;
+}
+
+.testit-testplans-panel .testit-attr-label {
+    margin-bottom: 3px;
+    font-size: 12px;
+    color: #6b778c;
+}
+
+.testit-testplans-panel .testit-attr-required {
+    color: #de350b;
+}
+
+.testit-testplans-panel .testit-attr-value {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    min-height: 22px;
+    font-size: 14px;
+    color: #172b4d;
+    overflow-wrap: anywhere;
+}
+
+.testit-testplans-panel .testit-attr-empty {
+    color: #a5adba;
+    font-style: italic;
+}
+
+.testit-testplans-panel .testit-attr-chip {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 18px;
+}
+
+.testit-testplans-panel .testit-attr-check {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 18px;
+}
+
+.testit-testplans-panel .testit-attr-check-on {
+    background: #e3fcef;
+    color: #006644;
+}
+
+.testit-testplans-panel .testit-attr-check-off {
+    background: #ebecf0;
+    color: #42526e;
+}
+
+.testit-testplans-panel .testit-attr-user {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.testit-testplans-panel .testit-attr-avatar {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 22px;
+    text-align: center;
+}
+
+.testit-testplans-panel .testit-attr-date {
+    font-variant-numeric: tabular-nums;
+}
+
+.testit-testplans-panel .testit-attr-text {
+    width: 100%;
+    white-space: pre-wrap;
+}
+
+/* ---- tabbed plan card ---- */
+.testit-testplans-panel .testit-tp-card {
+    display: block;
+    padding: 16px 20px 18px;
+}
+
+.testit-testplans-panel .testit-tp-head {
+    padding-right: 24px;
+}
+
+.testit-testplans-panel .testit-tp-head .testit-tp-meta {
+    margin-bottom: 4px;
+}
+
+.testit-testplans-panel .testit-tp-title {
+    padding-right: 0;
+}
+
+.testit-testplans-panel .testit-tp-tabs {
+    display: flex;
+    gap: 4px;
+    margin: 8px 0 14px;
+    border-bottom: 1px solid #dfe1e6;
+}
+
+.testit-testplans-panel .testit-tp-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: -1px;
+    padding: 8px 12px;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 500;
+    color: #42526e;
+    cursor: pointer;
+}
+
+.testit-testplans-panel .testit-tp-tab:hover {
+    color: #0052cc;
+    background: #f4f5f7;
+}
+
+.testit-testplans-panel .testit-tp-tab:focus {
+    outline: 2px solid #4c9aff;
+    outline-offset: -2px;
+}
+
+.testit-testplans-panel .testit-tp-tab-active,
+.testit-testplans-panel .testit-tp-tab-active:hover {
+    color: #0052cc;
+    border-bottom-color: #0052cc;
+    background: transparent;
+}
+
+.testit-testplans-panel .testit-tab-badge {
+    min-width: 20px;
+    padding: 0 6px;
+    border-radius: 10px;
+    background: #ebecf0;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 20px;
+    text-align: center;
+    color: #42526e;
+}
+
+.testit-testplans-panel .testit-tab-badge-alert {
+    background: #ffebe6;
+    color: #bf2600;
+}
+
+.testit-testplans-panel .testit-tab-badge-loading {
+    color: #6b778c;
+}
+
+/* All panes share one grid cell: the card height is the same on every tab. */
+.testit-testplans-panel .testit-tp-panes {
+    display: grid;
+}
+
+.testit-testplans-panel .testit-tp-pane {
+    grid-area: 1 / 1;
+    align-self: start;
+    min-width: 0;
+}
+
+.testit-testplans-panel .testit-tp-pane-hidden {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.testit-testplans-panel .testit-tp-overview {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+}
+
+.testit-testplans-panel .testit-tp-overview .testit-attr-section {
+    flex: 1 1 100%;
+    margin-top: 4px;
+    padding-top: 14px;
+    border-top: 1px solid #ebecf0;
+}
+
+/* ---- bugs ---- */
+.testit-testplans-panel .testit-bugs {
+    max-height: 420px;
+    overflow-y: auto;
+    padding-right: 2px;
+}
+
+.testit-testplans-panel .testit-bugs-empty {
+    padding: 28px 0 12px;
+    text-align: center;
+}
+
+.testit-testplans-panel .testit-bugs-empty-icon {
+    width: 44px;
+    height: 44px;
+    margin: 0 auto 10px;
+    border-radius: 50%;
+    background: #e3fcef;
+    font-size: 22px;
+    line-height: 44px;
+    color: #006644;
+}
+
+.testit-testplans-panel .testit-bugs-empty-title {
+    margin-bottom: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #172b4d;
+}
+
+.testit-testplans-panel .testit-bug-summary {
+    margin-bottom: 12px;
+}
+
+.testit-testplans-panel .testit-bug-summary-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 8px;
+    margin-bottom: 8px;
+}
+
+.testit-testplans-panel .testit-bug-total {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 28px;
+    color: #172b4d;
+}
+
+.testit-testplans-panel .testit-bug-total-label {
+    margin-right: 4px;
+    color: #42526e;
+}
+
+.testit-testplans-panel .testit-bug-open {
+    padding: 0 8px;
+    border-radius: 10px;
+    background: #e3fcef;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 20px;
+    color: #006644;
+}
+
+.testit-testplans-panel .testit-bug-open-has {
+    background: #ffebe6;
+    color: #bf2600;
+}
+
+.testit-testplans-panel .testit-bug-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 18px;
+    margin: 10px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.testit-testplans-panel .testit-bug-legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    font-size: 13px;
+}
+
+.testit-testplans-panel .testit-bug-legend-label {
+    color: #42526e;
+}
+
+.testit-testplans-panel .testit-bug-legend-count {
+    font-weight: 600;
+    color: #172b4d;
+}
+
+.testit-testplans-panel .testit-bugs-toolbar {
+    margin: 14px 0 6px;
+}
+
+.testit-testplans-panel .testit-bug-filters {
+    display: inline-flex;
+    padding: 2px;
+    border-radius: 6px;
+    background: #f4f5f7;
+}
+
+.testit-testplans-panel .testit-bug-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    font-size: 13px;
+    font-weight: 500;
+    color: #42526e;
+    cursor: pointer;
+}
+
+.testit-testplans-panel .testit-bug-filter:hover {
+    background: #ebecf0;
+}
+
+.testit-testplans-panel .testit-bug-filter-active,
+.testit-testplans-panel .testit-bug-filter-active:hover {
+    background: #fff;
+    color: #0052cc;
+    box-shadow: 0 1px 2px rgba(9, 30, 66, 0.2);
+}
+
+.testit-testplans-panel .testit-bug-filter-count {
+    padding: 0 6px;
+    border-radius: 8px;
+    background: rgba(9, 30, 66, 0.08);
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 16px;
+}
+
+.testit-testplans-panel .testit-bugs-none {
+    padding: 24px 0;
+    text-align: center;
+}
+
+.testit-testplans-panel .testit-bug-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 140px 112px 168px;
+    gap: 16px;
+    align-items: start;
+    padding: 12px 8px;
+    border-bottom: 1px solid #ebecf0;
+}
+
+.testit-testplans-panel .testit-bug-row:not(.testit-bug-header):hover {
+    background: #fafbfc;
+}
+
+.testit-testplans-panel .testit-bug-header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #dfe1e6;
+    background: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #6b778c;
+}
+
+.testit-testplans-panel .testit-bug-col {
+    min-width: 0;
+}
+
+.testit-testplans-panel .testit-bug-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 3px;
+}
+
+.testit-testplans-panel .testit-bug-key {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b778c;
+}
+
+.testit-testplans-panel .testit-bug-src {
+    padding: 0 7px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 18px;
+    white-space: nowrap;
+}
+
+.testit-testplans-panel .testit-bug-src-defect {
+    background: #ffebe6;
+    color: #bf2600;
+}
+
+.testit-testplans-panel .testit-bug-src-linked {
+    background: #eae6ff;
+    color: #403294;
+}
+
+.testit-testplans-panel .testit-bug-title {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    overflow-wrap: anywhere;
+    text-decoration: none;
+}
+
+.testit-testplans-panel .testit-bug-title:hover {
+    text-decoration: underline;
+}
+
+.testit-testplans-panel .testit-bug-hint {
+    margin-top: 2px;
+    font-size: 12px;
+    color: #a5adba;
+}
+
+.testit-testplans-panel .testit-bug-tests {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 6px;
+    margin-top: 6px;
+}
+
+.testit-testplans-panel .testit-bug-tests:empty {
+    display: none;
+}
+
+.testit-testplans-panel .testit-bug-tests-label {
+    font-size: 12px;
+    color: #6b778c;
+}
+
+.testit-testplans-panel .testit-bug-test {
+    max-width: 260px;
+    overflow: hidden;
+    padding: 0 8px;
+    border-radius: 10px;
+    background: #f4f5f7;
+    font-size: 12px;
+    line-height: 20px;
+    color: #42526e;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.testit-testplans-panel a.testit-bug-test:hover {
+    background: #deebff;
+    color: #0052cc;
+}
+
+.testit-testplans-panel .testit-bug-test-more {
+    padding: 0 8px;
+    border: 1px dashed #c1c7d0;
+    border-radius: 10px;
+    background: transparent;
+    font-size: 12px;
+    line-height: 18px;
+    color: #0052cc;
+    cursor: pointer;
+}
+
+.testit-testplans-panel .testit-bug-status {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    padding: 1px 6px;
+    border-radius: 3px;
+    background: #dfe1e6;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 16px;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: #42526e;
+    vertical-align: top;
+}
+
+.testit-testplans-panel .testit-bug-status-todo {
+    background: #dfe1e6;
+    color: #42526e;
+}
+
+.testit-testplans-panel .testit-bug-status-progress {
+    background: #deebff;
+    color: #0747a6;
+}
+
+.testit-testplans-panel .testit-bug-status-done {
+    background: #e3fcef;
+    color: #006644;
+}
+
+.testit-testplans-panel .testit-bug-status-unknown {
+    background: #f4f5f7;
+    color: #6b778c;
+}
+
+.testit-testplans-panel .testit-bug-priority {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    line-height: 18px;
+}
+
+.testit-testplans-panel .testit-bug-priority img {
+    width: 16px;
+    height: 16px;
+}
+
+.testit-testplans-panel .testit-bug-col-assignee .testit-attr-user {
+    max-width: 100%;
+}
+
+.testit-testplans-panel .testit-bug-assignee-name {
+    overflow: hidden;
+    font-size: 13px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.testit-testplans-panel .testit-attr-avatar-img {
+    object-fit: cover;
+}
+
+/* loading skeleton keeps the pane from jumping when the data arrives */
+.testit-testplans-panel .testit-skel-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 140px 112px;
+    gap: 16px;
+    padding: 16px 8px;
+    border-bottom: 1px solid #ebecf0;
+}
+
+.testit-testplans-panel .testit-skel {
+    display: block;
+    height: 12px;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #ebecf0 25%, #f4f5f7 50%, #ebecf0 75%);
+    background-size: 200% 100%;
+    animation: testit-skel-shimmer 1.2s linear infinite;
+}
+
+@keyframes testit-skel-shimmer {
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
+}
+
+/* touch screens have no hover: keep the unlink button visible */
+@media (hover: none) {
+    .testit-testplans-panel .testit-testplan-unlink-btn {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+@media (max-width: 760px) {
+    .testit-testplans-panel .testit-bug-header {
+        display: none;
+    }
+
+    .testit-testplans-panel .testit-bug-row {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px 12px;
+    }
+
+    .testit-testplans-panel .testit-bug-col-main {
+        grid-column: 1 / -1;
+    }
+
+    .testit-testplans-panel .testit-bug-col[data-label]:before {
+        display: block;
+        margin-bottom: 2px;
+        content: attr(data-label);
+        font-size: 11px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #6b778c;
+    }
+}
+
+/* ---- clickable statuses ---- */
+.testit-testplans-panel .testit-tp-seg-click {
+    cursor: pointer;
+}
+
+.testit-testplans-panel .testit-tp-donut circle.testit-tp-seg-click:hover {
+    opacity: 0.8;
+}
+
+.testit-testplans-panel .testit-tp-bar-seg.testit-tp-seg-click:hover {
+    filter: brightness(0.9);
+}
+
+.testit-testplans-panel .testit-tp-legend-click {
+    margin: -2px -6px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.testit-testplans-panel .testit-tp-legend-click:hover,
+.testit-testplans-panel .testit-tp-legend-click:focus {
+    background: #f4f5f7;
+    outline: none;
+}
+
+.testit-testplans-panel .testit-tp-legend-click:focus {
+    box-shadow: 0 0 0 2px #4c9aff;
+}
+
+.testit-testplans-panel .testit-tp-legend-click .testit-tp-legend-label {
+    text-decoration: underline;
+    text-decoration-color: #c1c7d0;
+    text-underline-offset: 2px;
+}
+
+/* ---- tests tab ---- */
+.testit-testplans-panel .testit-tests {
+    max-height: 420px;
+    overflow-y: auto;
+    padding-right: 2px;
+}
+
+.testit-testplans-panel .testit-tst-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #fff;
+}
+
+.testit-testplans-panel .testit-tst-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 12px;
+    padding-bottom: 8px;
+    background: #fff;
+}
+
+.testit-testplans-panel .testit-tst-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.testit-testplans-panel .testit-tst-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    border: 1px solid #dfe1e6;
+    border-radius: 14px;
+    background: #fff;
+    font-size: 13px;
+    color: #42526e;
+    cursor: pointer;
+}
+
+.testit-testplans-panel .testit-tst-chip:hover {
+    background: #f4f5f7;
+}
+
+.testit-testplans-panel .testit-tst-chip-active,
+.testit-testplans-panel .testit-tst-chip-active:hover {
+    border-color: #0052cc;
+    background: #deebff;
+    color: #0747a6;
+}
+
+.testit-testplans-panel .testit-tst-chip-count {
+    font-size: 12px;
+    font-weight: 600;
+    color: #172b4d;
+}
+
+.testit-testplans-panel .testit-tst-search {
+    width: 200px;
+    max-width: 100%;
+    height: 30px;
+    margin: 0;
+}
+
+.testit-testplans-panel .testit-tst-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 150px minmax(120px, 190px);
+    gap: 16px;
+    align-items: start;
+    padding: 10px 8px;
+    border-bottom: 1px solid #ebecf0;
+}
+
+.testit-testplans-panel .testit-tst-row:not(.testit-tst-header):hover {
+    background: #fafbfc;
+}
+
+.testit-testplans-panel .testit-tst-header {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #dfe1e6;
+    background: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #6b778c;
+}
+
+.testit-testplans-panel .testit-tst-col {
+    min-width: 0;
+}
+
+.testit-testplans-panel .testit-tst-name {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    overflow-wrap: anywhere;
+    text-decoration: none;
+}
+
+.testit-testplans-panel a.testit-tst-name:hover {
+    text-decoration: underline;
+}
+
+.testit-testplans-panel .testit-tst-where {
+    margin-top: 2px;
+    overflow: hidden;
+    font-size: 12px;
+    color: #6b778c;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.testit-testplans-panel .testit-tst-who {
+    margin-top: 2px;
+    overflow: hidden;
+    font-size: 12px;
+    color: #42526e;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.testit-testplans-panel .testit-tst-status {
+    display: inline-flex;
+    max-width: 100%;
+    align-items: center;
+    gap: 6px;
+    padding: 0 8px;
+    border: 1px solid;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 20px;
+    white-space: nowrap;
+}
+
+.testit-testplans-panel .testit-tst-status .testit-tp-dot {
+    flex: 0 0 8px;
+    width: 8px;
+    height: 8px;
+}
+
+.testit-testplans-panel .testit-tst-text {
+    display: block;
+    overflow: hidden;
+    font-size: 13px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.testit-testplans-panel .testit-tst-col-defects {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.testit-testplans-panel .testit-tst-defect {
+    padding: 0 8px;
+    border-radius: 10px;
+    background: #ffebe6;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 20px;
+    color: #bf2600;
+    text-decoration: none;
+}
+
+.testit-testplans-panel a.testit-tst-defect:hover {
+    background: #ffd5cc;
+}
+
+.testit-testplans-panel .testit-tst-none {
+    padding: 24px 0;
+    text-align: center;
+}
+
+.testit-testplans-panel .testit-tst-more {
+    display: block;
+    width: 100%;
+    margin: 6px 0 2px;
+    padding: 8px;
+    border: 1px dashed #c1c7d0;
+    border-radius: 4px;
+    background: transparent;
+    font-size: 13px;
+    color: #0052cc;
+    cursor: pointer;
+}
+
+.testit-testplans-panel .testit-tst-more:hover {
+    background: #f4f5f7;
+}
+
+.testit-testplans-panel .testit-tst-note {
+    padding: 10px 8px;
+    font-size: 12px;
+    color: #6b778c;
+}
+
+@media (max-width: 760px) {
+    .testit-testplans-panel .testit-tst-header {
+        display: none;
+    }
+
+    .testit-testplans-panel .testit-tst-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px 12px;
+        gap: 8px 12px;
+    }
+
+    .testit-testplans-panel .testit-tst-col-main {
+        grid-column: 1 / -1;
+    }
+
+    .testit-testplans-panel .testit-tst-col[data-label]:before {
+        display: block;
+        margin-bottom: 2px;
+        content: attr(data-label);
+        font-size: 11px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #6b778c;
+    }
+}
