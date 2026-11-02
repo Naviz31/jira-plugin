@@ -38,11 +38,20 @@ final class TmsPlanHistory {
         final String url;
         final String title;
         final String run;
+        final String resultId;
+        /** The test point (test + configuration) the result was for; null when it could not be resolved. */
+        String pointId;
 
-        Past(String url, String title, String run) {
+        Past(String url, String title, String run, String resultId) {
             this.url = url;
             this.title = title;
             this.run = run;
+            this.resultId = resultId;
+        }
+
+        /** True when the defect belongs to this test point of the plan. */
+        boolean matches(String point) {
+            return pointId == null || point == null || pointId.equalsIgnoreCase(point);
         }
     }
 
@@ -94,6 +103,8 @@ final class TmsPlanHistory {
                     }
                 }));
             }
+            // The history does not say which configuration a result was for: ask for the few results with a defect.
+            final Map<String, Future<String>> pointIds = new LinkedHashMap<>();
             long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(DEADLINE_SECONDS);
             for (Map.Entry<String, Future<List<JsonObject>>> entry : futures.entrySet()) {
                 try {
@@ -102,9 +113,35 @@ final class TmsPlanHistory {
                     List<Past> past = pastDefects(results, planId, lastResults.get(entry.getKey()));
                     if (!past.isEmpty()) {
                         result.put(entry.getKey(), past);
+                        for (final Past item : past) {
+                            if (item.resultId != null && !pointIds.containsKey(item.resultId)) {
+                                pointIds.put(item.resultId, pool.submit(new Callable<String>() {
+                                    @Override
+                                    public String call() throws Exception {
+                                        return TmsJson.getString(
+                                                client.getTestResult(baseUrl, token, item.resultId), "testPointId");
+                                    }
+                                }));
+                            }
+                        }
                     }
                 } catch (Exception e) {
                     log.debug("TMS result history failed for {}: {}", entry.getKey(), e.getMessage());
+                }
+            }
+            for (List<Past> list : result.values()) {
+                for (Past item : list) {
+                    Future<String> future = pointIds.get(item.resultId);
+                    if (future == null) {
+                        continue;
+                    }
+                    try {
+                        long left = Math.max(1L, deadline - System.nanoTime());
+                        item.pointId = future.get(left, TimeUnit.NANOSECONDS);
+                    } catch (Exception e) {
+                        // Left unresolved: the defect then goes to every point of that test.
+                        log.debug("TMS result {} lookup failed: {}", item.resultId, e.getMessage());
+                    }
                 }
             }
         } finally {
@@ -141,7 +178,7 @@ final class TmsPlanHistory {
                 if (type == null || !"defect".equals(type.toLowerCase(Locale.ROOT)) || !TmsPlanBugs.isHttpUrl(url)) {
                     continue;
                 }
-                past.add(new Past(url.trim(), TmsJson.getString(link, "title"), run));
+                past.add(new Past(url.trim(), TmsJson.getString(link, "title"), run, id));
             }
         }
         return past;

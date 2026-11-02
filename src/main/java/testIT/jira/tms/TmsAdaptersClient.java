@@ -270,6 +270,18 @@ public class TmsAdaptersClient {
         return TmsJson.parseObjectArray(response.body);
     }
 
+    /** One test result by id; unlike the history list it says which test point (test + configuration) it is for. */
+    public JsonObject getTestResult(String baseUrl, String token, String resultId)
+            throws TmsClientException, IOException {
+        if (resultId == null || resultId.trim().isEmpty()) {
+            return new JsonObject();
+        }
+        URI uri = URI.create(TmsHttpClient.normalizeBaseUrl(baseUrl) + "/api/v2/testResults/" + resultId.trim());
+        TmsHttpClient.HttpResponseData response =
+                TmsHttpClient.executeGet(uri, token, "TMS get test result failed");
+        return TmsJson.parseObject(response.body);
+    }
+
     public JsonObject getConfiguration(String baseUrl, String token, String configurationId)
             throws TmsClientException, IOException {
         if (configurationId == null || configurationId.trim().isEmpty()) {

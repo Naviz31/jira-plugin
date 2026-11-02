@@ -135,6 +135,8 @@ final class TmsPlanBugs {
             }
         }
         // Earlier results last, so a defect that is also on a last result is not marked as a past one.
+        java.util.Set<TmsPlanHistory.Past> placed =
+                java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<TmsPlanHistory.Past, Boolean>());
         for (JsonObject point : points) {
             List<TmsPlanHistory.Past> past = history.get(TmsJson.getString(point, "workItemId"));
             if (past == null) {
@@ -142,19 +144,36 @@ final class TmsPlanBugs {
             }
             TmsPlanBugDto.Test test = toTest(point, baseUrl, projectGlobalId);
             for (TmsPlanHistory.Past item : past) {
-                TmsPlanBugDto bug = bugFor(byUrl, item.url);
-                if (!bug.defect) {
-                    bug.defect = true;
-                    bug.past = true;
-                    bug.run = item.run;
+                // A defect belongs to the test point (test + configuration) it was found on, not to every copy.
+                if (!item.matches(TmsJson.getString(point, "id"))) {
+                    continue;
                 }
-                if (item.title != null && !item.title.isEmpty() && (bug.title == null || bug.title.isEmpty())) {
-                    bug.title = item.title;
+                placed.add(item);
+                addTest(addPast(byUrl, item), test);
+            }
+        }
+        // Defects whose test point is no longer in the plan still count for the plan.
+        for (List<TmsPlanHistory.Past> past : history.values()) {
+            for (TmsPlanHistory.Past item : past) {
+                if (!placed.contains(item)) {
+                    addPast(byUrl, item);
                 }
-                addTest(bug, test);
             }
         }
         return new ArrayList<>(byUrl.values());
+    }
+
+    private static TmsPlanBugDto addPast(Map<String, TmsPlanBugDto> byUrl, TmsPlanHistory.Past item) {
+        TmsPlanBugDto bug = bugFor(byUrl, item.url);
+        if (!bug.defect) {
+            bug.defect = true;
+            bug.past = true;
+            bug.run = item.run;
+        }
+        if (item.title != null && !item.title.isEmpty() && (bug.title == null || bug.title.isEmpty())) {
+            bug.title = item.title;
+        }
+        return bug;
     }
 
     private static TmsPlanBugDto bugFor(Map<String, TmsPlanBugDto> byUrl, String url) {

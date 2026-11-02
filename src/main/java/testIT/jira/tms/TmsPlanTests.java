@@ -159,6 +159,9 @@ final class TmsPlanTests {
         }
         if (past != null) {
             for (TmsPlanHistory.Past item : past) {
+                if (!item.matches(TmsJson.getString(point, "id"))) {
+                    continue;
+                }
                 int before = dto.links.size();
                 addLink(dto, byIdentity, item.url, true);
                 if (dto.links.size() > before) {
