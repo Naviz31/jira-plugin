@@ -17,7 +17,8 @@ import org.slf4j.LoggerFactory;
  */
 final class TmsPlanTests {
     private static final Logger log = LoggerFactory.getLogger(TmsPlanTests.class);
-    private static final long CACHE_TTL_MS = 30_000L;
+    /** Long enough to serve the several calls of one page view, short enough to show a result just saved. */
+    private static final long CACHE_TTL_MS = 5_000L;
     /** The panel shows at most this many tests per status; the rest are one click away in Test IT. */
     static final int PER_STATUS_LIMIT = 200;
 

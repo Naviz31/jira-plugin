@@ -933,6 +933,16 @@
             return known ? f : "all";
         }
 
+        function statusCountFor(label) {
+            var count = 0;
+            $.each(statuses, function (_, st) {
+                if (st.label === label) {
+                    count = st.count;
+                }
+            });
+            return count;
+        }
+
         function renderChips() {
             var filter = currentFilter();
             $chips.empty();
@@ -984,8 +994,13 @@
                 return;
             }
             if (!visible.length) {
+                // The chip counts come from the plan summary and the rows from the test points: right after
+                // a result is saved the two can disagree for a moment.
+                var stale = !query && filter !== "all" && statusCountFor(filter) > 0;
                 $list.append($("<div>").addClass("testit-tst-none description").text(
-                    query ? "Ничего не найдено" : "Нет тестов с таким статусом"));
+                    query ? "Ничего не найдено"
+                        : (stale ? "Список тестов ещё не обновился. Нажмите «Обновить тест-планы»."
+                            : "Нет тестов с таким статусом")));
                 return;
             }
             // Thousands of rows would make the page sluggish: the rest is revealed on demand.
