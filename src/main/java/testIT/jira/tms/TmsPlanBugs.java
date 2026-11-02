@@ -84,6 +84,12 @@ final class TmsPlanBugs {
     }
 
     static List<TmsPlanBugDto> collect(List<JsonObject> points, String baseUrl, Long projectGlobalId) {
+        return collect(points, baseUrl, projectGlobalId, new java.util.HashMap<String, List<TmsPlanHistory.Past>>());
+    }
+
+    static List<TmsPlanBugDto> collect(
+            List<JsonObject> points, String baseUrl, Long projectGlobalId,
+            Map<String, List<TmsPlanHistory.Past>> history) {
         Map<String, TmsPlanBugDto> byUrl = new LinkedHashMap<>();
         for (JsonObject point : points) {
             TmsPlanBugDto.Test test = toTest(point, baseUrl, projectGlobalId);
@@ -126,6 +132,26 @@ final class TmsPlanBugs {
                     bug.linked = true;
                     addTest(bug, test);
                 }
+            }
+        }
+        // Earlier results last, so a defect that is also on a last result is not marked as a past one.
+        for (JsonObject point : points) {
+            List<TmsPlanHistory.Past> past = history.get(TmsJson.getString(point, "workItemId"));
+            if (past == null) {
+                continue;
+            }
+            TmsPlanBugDto.Test test = toTest(point, baseUrl, projectGlobalId);
+            for (TmsPlanHistory.Past item : past) {
+                TmsPlanBugDto bug = bugFor(byUrl, item.url);
+                if (!bug.defect) {
+                    bug.defect = true;
+                    bug.past = true;
+                    bug.run = item.run;
+                }
+                if (item.title != null && !item.title.isEmpty() && (bug.title == null || bug.title.isEmpty())) {
+                    bug.title = item.title;
+                }
+                addTest(bug, test);
             }
         }
         return new ArrayList<>(byUrl.values());

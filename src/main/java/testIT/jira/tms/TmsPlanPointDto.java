@@ -24,5 +24,8 @@ public class TmsPlanPointDto {
         public String key;
         public String url;
         public boolean defect;
+        /** True when the defect is on an earlier result of the test and not on its last one. */
+        public boolean past;
+        public String run;
     }
 }

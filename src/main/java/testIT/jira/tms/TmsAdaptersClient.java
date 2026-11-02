@@ -257,6 +257,19 @@ public class TmsAdaptersClient {
         return points;
     }
 
+    /** Result history of a test (by work item UUID), newest first: what the Test IT "History" tab shows. */
+    public List<JsonObject> getWorkItemResults(String baseUrl, String token, String workItemId)
+            throws TmsClientException, IOException {
+        if (workItemId == null || workItemId.trim().isEmpty()) {
+            return new ArrayList<>();
+        }
+        URI uri = URI.create(TmsHttpClient.normalizeBaseUrl(baseUrl) + "/api/WorkItems/" + workItemId.trim()
+                + "/results?orderBy=completedOn%20desc&skip=0&take=100");
+        TmsHttpClient.HttpResponseData response =
+                TmsHttpClient.executeGet(uri, token, "TMS get work item results failed");
+        return TmsJson.parseObjectArray(response.body);
+    }
+
     public JsonObject getConfiguration(String baseUrl, String token, String configurationId)
             throws TmsClientException, IOException {
         if (configurationId == null || configurationId.trim().isEmpty()) {

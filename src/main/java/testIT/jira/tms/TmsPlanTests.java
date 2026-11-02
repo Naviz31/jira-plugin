@@ -54,11 +54,14 @@ final class TmsPlanTests {
         }
         try {
             List<JsonObject> points = client.getTestPlanPoints(baseUrl, token, planId);
-            List<TmsPlanBugDto> bugs = TmsPlanBugs.collect(points, baseUrl, projectGlobalId);
+            Map<String, List<TmsPlanHistory.Past>> history =
+                    TmsPlanHistory.load(client, baseUrl, token, planId, points);
+            List<TmsPlanBugDto> bugs = TmsPlanBugs.collect(points, baseUrl, projectGlobalId, history);
             boolean[] truncated = new boolean[1];
             // Plans bigger than what is read from Test IT are cut too, not only per-status.
             truncated[0] = points.size() >= TmsAdaptersClient.TEST_POINTS_LIMIT;
-            List<TmsPlanPointDto> tests = mapPoints(client, baseUrl, token, points, projectGlobalId, truncated);
+            List<TmsPlanPointDto> tests =
+                    mapPoints(client, baseUrl, token, points, projectGlobalId, truncated, history);
             Result result = new Result(bugs, tests, truncated[0]);
             final long now = System.currentTimeMillis();
             for (java.util.Iterator<Result> it = CACHE.values().iterator(); it.hasNext();) {
@@ -78,6 +81,13 @@ final class TmsPlanTests {
     static List<TmsPlanPointDto> mapPoints(
             TmsAdaptersClient client, String baseUrl, String token, List<JsonObject> points,
             Long projectGlobalId, boolean[] truncated) {
+        return mapPoints(client, baseUrl, token, points, projectGlobalId, truncated,
+                new HashMap<String, List<TmsPlanHistory.Past>>());
+    }
+
+    static List<TmsPlanPointDto> mapPoints(
+            TmsAdaptersClient client, String baseUrl, String token, List<JsonObject> points,
+            Long projectGlobalId, boolean[] truncated, Map<String, List<TmsPlanHistory.Past>> history) {
         List<TmsPlanPointDto> result = new ArrayList<>();
         Map<String, Integer> perStatus = new HashMap<>();
         for (JsonObject point : points) {
@@ -103,7 +113,7 @@ final class TmsPlanTests {
                 // Left empty rather than showing a placeholder on every row when the token cannot read users.
                 dto.tester = TmsPlanAttributes.findUserName(client, baseUrl, token, testerId);
             }
-            fillLinks(point, dto);
+            fillLinks(point, dto, history.get(TmsJson.getString(point, "workItemId")));
             result.add(dto);
         }
         return result;
@@ -120,7 +130,7 @@ final class TmsPlanTests {
         }
     }
 
-    private static void fillLinks(JsonObject point, TmsPlanPointDto dto) {
+    private static void fillLinks(JsonObject point, TmsPlanPointDto dto, List<TmsPlanHistory.Past> past) {
         Map<String, TmsPlanPointDto.Link> byIdentity = new HashMap<>();
         JsonObject last = point.has("lastTestResult") && point.get("lastTestResult").isJsonObject()
                 ? point.getAsJsonObject("lastTestResult")
@@ -144,6 +154,18 @@ final class TmsPlanTests {
                 String url = TmsPlanBugs.linkUrl(element);
                 if (TmsPlanBugs.isHttpUrl(url) && TmsPlanBugs.extractKey(url) != null) {
                     addLink(dto, byIdentity, url.trim(), false);
+                }
+            }
+        }
+        if (past != null) {
+            for (TmsPlanHistory.Past item : past) {
+                int before = dto.links.size();
+                addLink(dto, byIdentity, item.url, true);
+                if (dto.links.size() > before) {
+                    // A new link: the defect is on no last result. One that already exists keeps its own state.
+                    TmsPlanPointDto.Link added = dto.links.get(dto.links.size() - 1);
+                    added.past = true;
+                    added.run = item.run;
                 }
             }
         }

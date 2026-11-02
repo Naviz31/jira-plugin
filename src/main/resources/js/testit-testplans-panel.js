@@ -526,6 +526,8 @@
                     hint: fields ? null : (local ? "нет доступа к задаче или она удалена" : "задача из другой Jira"),
                     defect: !!bug.defect,
                     linked: !!bug.linked,
+                    past: !!bug.past,
+                    run: bug.run || null,
                     typeName: typeName,
                     statusName: status ? status.name : null,
                     category: status ? categoryKey(status.statusCategory) : "unknown",
@@ -668,6 +670,11 @@
         if (vm.defect) {
             $top.append($("<span>").addClass("testit-bug-src testit-bug-src-defect")
                 .attr("title", "Дефект, прикреплённый к результату теста").text("Дефект"));
+        }
+        if (vm.past) {
+            $top.append($("<span>").addClass("testit-bug-src testit-bug-src-past")
+                .attr("title", "Дефект заведён в более раннем результате теста" + (vm.run ? " (прогон «" + vm.run + "»)" : ""))
+                .text("Из прошлого прогона"));
         }
         if (vm.linked) {
             $top.append($("<span>").addClass("testit-bug-src testit-bug-src-linked")
@@ -872,7 +879,10 @@
                 ? $("<a>").attr({ href: link.url, target: "_blank", rel: "noopener noreferrer" })
                 : $("<span>");
             var text = link.key || "Дефект";
-            $defects.append($chip.addClass("testit-tst-defect").attr("title", "Дефект " + (link.key || link.url || "")).text(text));
+            var chipTitle = "Дефект " + (link.key || link.url || "")
+                + (link.past ? " — из прошлого прогона" + (link.run ? " «" + link.run + "»" : "") : "");
+            $defects.append($chip.addClass("testit-tst-defect" + (link.past ? " testit-tst-defect-past" : ""))
+                .attr("title", chipTitle).text(text));
             shown++;
         });
         if (!shown) {

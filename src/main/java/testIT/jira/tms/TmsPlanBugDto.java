@@ -14,6 +14,10 @@ public class TmsPlanBugDto {
     public boolean defect;
     /** True when the link is attached to the work item itself (needs a bug-type check on the Jira side). */
     public boolean linked;
+    /** True when the defect is only on an earlier result of the test, not on its last one. */
+    public boolean past;
+    /** Name of the test run that holds the earlier result; set together with {@link #past}. */
+    public String run;
     public List<Test> tests = new ArrayList<>();
 
     /** A test of the plan the bug is attached to. */
